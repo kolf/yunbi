@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "axios": "^0.16.2",
+    "bootstrap-sass": "^3.3.7",
+    "vee-validate": "^2.0.0-rc.12",
     "vue": "^2.3.3"
   },
   "devDependencies": {
