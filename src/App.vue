@@ -11,7 +11,6 @@
           <table class="table currency-table">
             <thead>
               <tr>
-                <th>#</th>
                 <th>币种</th>
                 <th>现价</th>
                 <th>最高价</th>
@@ -21,9 +20,6 @@
             </thead>
             <tbody>
               <tr v-for="(item, index) in currencys">
-                <td>
-                  <img :src="'./assets/c_'+item.marketId+'.gif'" alt="">
-                </td>
                 <td>{{getCurrencyName(item.marketId)}}</td>
                 <td>￥{{item.currentPrice}}</td>
                 <td>
