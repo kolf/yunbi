@@ -3,7 +3,9 @@
     <div class="container">
       <div class="currency-box">
         <div class="well">
-          <h2>{{user.userName}} <small>{{user.mobile}}</small></h2>
+          <h2 style="margin: 10px 0">{{user.userName}}
+            <small>{{user.mobile}}</small>
+          </h2>
         </div>
         <div class="well">
           <table class="table currency-table">
@@ -45,7 +47,7 @@
               <button type="button" class="close" @click="toggleModal(false)">
                 <span aria-hidden="true">&times;</span>
               </button>
-              <h4 class="modal-title" id="myModalLabel">修改价格</h4>
+              <h4 class="modal-title">修改价格</h4>
             </div>
             <div class="modal-body">
               <form @submit.prevent="validateSubmit">
@@ -53,15 +55,17 @@
                   <label class="control-label">最高价</label>
                   <div class="input-group">
                     <div class="input-group-addon">$</div>
-                    <input type="number" v-validate="'required'" maxLength="6" minLength="1" class="form-control" name="highPrice" placeholder="请输入最高价" v-model="spyForm.highPrice">
+                    <input type="number" v-validate="'required'" maxLength="6" minLength="1" class="form-control" name="highPrice" placeholder="请输入最高价" v-model="spyForm.t_price">
                   </div>
+                  <span v-show="errors.has('highPrice')" class="help-block is-danger">最高价不能为空且只能是数字</span>
                 </div>
                 <div class="form-group" :class="{'has-error': errors.has('lowPrice')}">
                   <label class="control-label">最低价</label>
                   <div class="input-group">
                     <div class="input-group-addon">$</div>
-                    <input type="number" v-validate="'required'" maxLength="6" minLength="1" class="form-control" name="lowPrice" placeholder="请输入最低价" v-model="spyForm.lowPrice">
+                    <input type="number" v-validate="'required'" maxLength="6" minLength="1" class="form-control" name="lowPrice" placeholder="请输入最低价" v-model="spyForm.b_price">
                   </div>
+                  <span v-show="errors.has('lowPrice')" class="help-block is-danger">最低价不能为空且只能是数字</span>
                 </div>
               </form>
             </div>
@@ -74,6 +78,7 @@
       </div>
       <div v-if="showModal" :class="{'in': inModal, 'modal-backdrop fade': true}"></div>
     </div>
+    <notifications position="top center" />
   </div>
 </template>
 
@@ -111,7 +116,10 @@ export default {
     if (this.key) {
       this.verifyUser()
     } else {
-      alert('链接有误！')
+      this.$notify({
+        title: '链接错误',
+        text: '链接错误!'
+      })
     }
   },
   methods: {
@@ -123,13 +131,16 @@ export default {
     },
     toggleModal(show, item) {
       if (show) {
-        this.spyForm.highPrice = item.highPrice
-        this.spyForm.lowPrice = item.lowPrice
+        this.spyForm.t_price = item.highPrice
+        this.spyForm.b_price = item.lowPrice
+        this.spyForm.marketId = item.marketId
+        this.spyForm.userId = this.key
         this.showModal = show
         setTimeout(() => {
           this.inModal = show
         }, 150)
       } else {
+        this.spyForm = {}
         this.inModal = show
         setTimeout(() => {
           this.showModal = show
@@ -137,8 +148,14 @@ export default {
       }
     },
     validateSubmit() {
-      this.$validator.validateAll().then(() => {
-        this.updateSpy()
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          this.updateSpy();
+          return
+        }
+
+        // alert('error')
+        // this.updateSpy()
       })
     },
     verifyUser() {
@@ -166,9 +183,15 @@ export default {
         params: this.spyForm
       })
         .then((res) => {
+          console.log(res)
           if (res.status === 200) {
-            // alert('提交成功！')
+            const { message } = res.data
+            this.$notify({
+              title: '修改成功',
+              text: message
+            })
             this.toggleModal(false)
+            this.verifyUser()
           }
         })
     },
