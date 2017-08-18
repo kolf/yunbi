@@ -21,14 +21,10 @@
           </thead>
           <tbody>
             <tr v-for="(item, index) in currencys">
-              <td>{{getCurrencyName(item.marketId)}}</td>
+              <td>{{item.coinName}}</td>
               <td>￥{{item.currentPrice}}</td>
-              <td>
-                <strong>￥{{item.highPrice}}</strong>
-              </td>
-              <td>
-                <strong>￥{{item.lowPrice}}</strong>
-              </td>
+              <td>￥{{item.highPrice}}</td>
+              <td>￥{{item.lowPrice}}</td>
               <td>
                 <button class="btn btn-primary btn-sm" @click="toggleModal(true, item)">修改</button>
               </td>
